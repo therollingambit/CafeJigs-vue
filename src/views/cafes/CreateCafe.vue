@@ -19,8 +19,8 @@
           <p class="mr-3">Rating: </p>
           <star-rating
             v-model:rating="rating"
-            increment="0.5"
-            star-size="28"
+            :increment="incrementStar"
+            :star-size="starSize"
             text-class="mt-2"
           />
         </div>
@@ -89,7 +89,7 @@ import { timestamp } from "../../firebase/config";
 import { useRouter } from "vue-router";
 
 const { filePath, url, uploadImage } = useStorage();
-const { error, addDoc } = useCollection("cafes");
+const { error, addDocument } = useCollection("cafes");
 const { user } = getUser();
 
 const router = useRouter();
@@ -102,6 +102,8 @@ const file = ref(null);
 const fileError = ref(null);
 const isPending = ref(false);
 const descError = ref(false);
+const starSize = ref(28);
+const incrementStar = ref(0.5);
 
 const handleSubmit = async () => {
   if (description.value.length > 200) {
@@ -112,7 +114,7 @@ const handleSubmit = async () => {
     descError.value = false;
     isPending.value = true;
     await uploadImage(file.value);
-    const res = await addDoc({
+    const res = await addDocument({
       title: title.value,
       description: description.value,
       rating: rating.value,

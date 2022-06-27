@@ -20,7 +20,7 @@
             <star-rating
               v-model:rating="cafe.rating"
               read-only
-              star-size="20"
+              :star-size="starSize"
               text-class="mt-2"
             ></star-rating>
           </p>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import StarRating from "vue-star-rating";
 import getDocument from "../../composables/getDocument";
@@ -57,8 +57,10 @@ const router = useRouter();
 
 const { error, document: cafe } = getDocument("cafes", props.id);
 const { user } = getUser();
-const { deleteDoc } = useDocument("cafes", props.id);
+const { deleteDocument } = useDocument("cafes", props.id);
 const { deleteImage } = useStorage();
+
+const starSize = ref(20);
 
 const ownership = computed(() => {
   return cafe.value && user.value && user.value.uid === cafe.value.userId;
@@ -66,7 +68,7 @@ const ownership = computed(() => {
 
 const handleDelete = async () => {
   await deleteImage(cafe.value.filePath);
-  await deleteDoc();
+  await deleteDocument();
   router.push({ name: "Home" });
 };
 </script>

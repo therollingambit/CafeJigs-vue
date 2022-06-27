@@ -1,17 +1,30 @@
 import { ref } from "vue";
 import { projectFirestore } from "../firebase/config";
+import { collection, addDoc } from "firebase/firestore";
 
-const useCollection = (collection) => {
+const useCollection = (cols) => {
   const error = ref(null);
   const isPending = ref(false);
 
+  const colRef = collection(projectFirestore, cols);
+
   // add a new document
-  const addDoc = async (doc) => {
+  const addDocument = async (doc) => {
     error.value = null;
     isPending.value = true;
 
+    // try {
+    //   const res = await projectFirestore.collection(cols).add(doc);
+    //   isPending.value = false;
+    //   return res;
+    // } catch (err) {
+    //   console.log(err.message);
+    //   error.value = "could not send the message";
+    //   isPending.value = false;
+    // }
+
     try {
-      const res = await projectFirestore.collection(collection).add(doc);
+      const res = addDoc(colRef, doc);
       isPending.value = false;
       return res;
     } catch (err) {
@@ -21,7 +34,7 @@ const useCollection = (collection) => {
     }
   };
 
-  return { error, addDoc, isPending };
+  return { error, addDocument, isPending };
 };
 
 export default useCollection;

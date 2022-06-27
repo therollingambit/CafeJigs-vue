@@ -1,17 +1,20 @@
 import { ref } from "vue";
 import { projectFirestore } from "../firebase/config";
+import { doc, deleteDoc, updateDoc } from "firebase/firestore";
 
-const useDocument = (collection, id) => {
+const useDocument = (cols, id) => {
   let error = ref(null);
   let isPending = ref(false);
-  let docRef = projectFirestore.collection(collection).doc(id);
+  // let docRef = projectFirestore.collection(cols).doc(id);
+  let docRef = doc(projectFirestore, cols, id);
 
-  const deleteDoc = async () => {
+  const deleteDocument = async () => {
     isPending.value = true;
     error.value = null;
 
     try {
-      const res = await docRef.delete();
+      // const res = await docRef.delete();
+      const res = await deleteDoc(docRef);
       isPending.value = false;
       return res;
     } catch (err) {
@@ -21,12 +24,13 @@ const useDocument = (collection, id) => {
     }
   };
 
-  const updateDoc = async (updates) => {
+  const updateDocument = async (updates) => {
     isPending.value = true;
     error.value = null;
 
     try {
-      const res = await docRef.update(updates);
+      // const res = await docRef.update(updates);
+      const res = await updateDoc(docRef, updates);
       isPending.value = false;
       return res;
     } catch (err) {
@@ -36,7 +40,7 @@ const useDocument = (collection, id) => {
     }
   };
 
-  return { error, isPending, deleteDoc, updateDoc };
+  return { error, isPending, deleteDocument, updateDocument };
 };
 
 export default useDocument;
